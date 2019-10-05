@@ -1,5 +1,4 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 http_archive(
     name = "com_google_protobuf",
@@ -21,8 +20,6 @@ http_archive(
     url = "https://github.com/protocolbuffers/upb/archive/9effcbcb27f0a665f9f345030188c0b291e32482.tar.gz",
 )
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
 http_archive(
     name = "build_bazel_rules_swift",
     urls = [
@@ -30,23 +27,15 @@ http_archive(
     ],
 )
 
-load(
-    "@build_bazel_rules_swift//swift:repositories.bzl",
-    "swift_rules_dependencies",
-)
-
-swift_rules_dependencies()
-
-load(
-    "@build_bazel_apple_support//lib:repositories.bzl",
-    "apple_support_dependencies",
-)
-
-apple_support_dependencies()
-
+load("@build_bazel_rules_swift//swift:repositories.bzl", "swift_rules_dependencies")
+load("@build_bazel_apple_support//lib:repositories.bzl", "apple_support_dependencies")
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
 load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 load("@upb//bazel:workspace_deps.bzl", "upb_deps")
+
+apple_support_dependencies()
+
+swift_rules_dependencies()
 
 upb_deps()
 

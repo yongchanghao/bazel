@@ -1,5 +1,5 @@
 cc_binary(
-    name = "main",
-    srcs = ["main.cpp"],
-    deps = ["//protos:test_proto_cc"],
+    name = "message_server",
+    srcs = ["message_server.cpp"],
+    deps = ["//protos:message_proto_cc"],
 )
