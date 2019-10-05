@@ -7,13 +7,8 @@ proto_library(
     srcs = ["test.proto"],
 )
 
-cc_proto_library(
-    name = "test_proto_cc",
-    deps = [":test_proto"],
-)
-
 cc_grpc_library(
-    name = "test_grpc_cc",
+    name = "test_proto_cc",
     srcs = ["test.proto"],
     deps = [],
 )

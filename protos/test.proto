@@ -9,5 +9,5 @@ message MessageResponse {
 }
 
 service MessageService {
-  rpc GetPhone(MessageRequest) returns (MessageResponse);
+  rpc GetPhone (MessageRequest) returns (MessageResponse) {}
 }
