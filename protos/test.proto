@@ -1,0 +1,13 @@
+syntax = "proto2";
+
+message MessageRequest {
+  optional string name = 1;
+}
+
+message MessageResponse {
+  optional int64 phone = 1;
+}
+
+service MessageService {
+  rpc GetPhone(MessageRequest) returns (MessageResponse);
+}
