@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home Page</title>
+</head>
+<body>
+<div style="display: grid; grid-template-columns: 50% 50%;">
+  <div><h2 style="margin: 0;">Room List</h2></div>
+  <div style="text-align: right;"><span style="color: cornflowerblue; padding-right: 10px;">{{username}}</span><a
+      href="/login?logout" style="color: gray;">Log out</a></div>
+</div>
+<div>
+  <table border="1" cellspacing="0" style="margin: 5px;">
+    <tr>
+      <th colspan="3">Name</th>
+    </tr>
+    {% for room in rooms %}
+    <tr>
+      <td>{{room.name}}</td>
+      <td><a href="/room?rid={{room.rid}}" style="color: green;">Enter</a></td>
+      <td><a href="/manage?argument={{room.rid}}&operation=del" style="color: red;">Delete</a></td>
+    </tr>
+    {% end %}
+  </table>
+  <form action="manage">
+    <input name="operation" type="hidden" value="add">
+    <input name="argument" type="text">
+    <input type="submit" value="Create New Room">
+  </form>
+</div>
+</body>
+</html>
