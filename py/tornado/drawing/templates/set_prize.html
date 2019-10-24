@@ -1,0 +1,40 @@
+<html>
+<head>
+  <title>Set Prize</title>
+</head>
+<body>
+<h2>Set prize</h2>
+<form action="set" method="post">
+  <div style="display: grid; max-width: max-content;">
+    <label>Number of 1st Prize</label>
+    <input name="number-1" type="number"/>
+    <label>Number of 2nd Prize</label>
+    <input name="number-2" type="number"/>
+    <label>Number of 3rd Prize</label>
+    <input name="number-3" type="number"/>
+  </div>
+  <div>
+    <div id="namelist" style="display: grid; max-width: 50%;">
+      <label>Name</label>
+      <input name="name" type="text">
+    </div>
+    <input onclick="addPerson()" type="button" value="Add new">
+  </div>
+  <div>
+    <input style="margin: 12px 0px; background-color: dodgerblue; border-radius: 5px; color: white;" type="submit">
+  </div>
+</form>
+
+<script>
+    "use strict";
+
+    function addPerson() {
+        const newEl = document.createElement('input');
+        newEl.setAttribute("name", "name");
+        newEl.setAttribute("type", "text");
+        document.getElementById("namelist").append(newEl);
+        console.log(document.getElementById("namelist"));
+    }
+</script>
+</body>
+</html>
