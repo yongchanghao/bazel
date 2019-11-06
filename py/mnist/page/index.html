@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MNIST</title>
+</head>
+<body style="position: fixed; width: 100%; margin: 0; overflow: hidden; top: 0;">
+<div style="margin: 0px;">
+    <canvas id="canvas" width="28" height="28" style="width: 100%;"></canvas>
+    <button id="clear" style="width: 100%; font-size: 36px;" onclick="clearCanvas()">Clear</button>
+</div>
+<div id="result" style="width: 100%; font-size: 36px;"></div>
+<script>
+    const ws = new WebSocket("ws://{{server_address}}:{{server_port}}/{{server_routing}}");
+    const canvas = document.getElementById("canvas");
+    const canvasWidth = 28.0;
+    const canvasHeight = 28.0;
+    document.ontouchmove = function (e) {
+        e.preventDefault();
+    };
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#000";
+    clearCanvas();
+
+    var enable = false;
+    function start(ev) {
+        const sx = ev.pageX;
+        const sy = ev.pageY;
+        enable = true;
+        ctx.beginPath();
+        ctx.moveTo(sx * canvasWidth / canvas.clientWidth, sy * canvasHeight / canvas.clientHeight);
+    }
+
+    function move(ev) {
+        if (enable) {
+            const sx = ev.pageX;
+            const sy = ev.pageY - scrollY;
+            ctx.lineTo(canvasWidth * sx / canvas.clientWidth, canvasHeight * sy / canvas.clientHeight);
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 3.0 * canvasHeight / canvas.clientHeight;
+            ctx.stroke();
+            ctx.save();
+        }
+    }
+
+    ws.onerror = function(error) {
+        const div = document.createElement("div");
+        div.innerText = "fuck";
+        document.getElementById("body").append(div);
+    };
+    function end(ev) {
+        enable = false;
+        ctx.closePath();
+        if (ws.readyState === ws.CLOSED || ws.readyState === ws.CLOSING) {
+            document.getElementById("result").innerText = "Disconnected";
+        }
+        else  {
+            ws.send(canvas.toDataURL("image/jpeg", 1));
+            document.getElementById("result").innerText = "Calculating";
+        }
+    }
+
+    canvas.onmousedown = start;
+    canvas.ontouchstart = start;
+    canvas.onmousemove = move;
+    canvas.ontouchmove = move;
+    canvas.onmouseup = end;
+    canvas.ontouchend = end;
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        document.getElementById("result").innerText = "";
+    }
+
+    ws.onmessage = function (message) {
+        document.getElementById("result").innerText = message.data;
+    };
+</script>
+</body>
+</html>
