@@ -1,11 +1,16 @@
+import os
+import sys
+
+import tensorflow as tf
 from matplotlib import pyplot as plt
 from tensorflow import keras
-import tensorflow as tf
 from tornado import web, websocket, ioloop, options
 
 OUTPUT_SIZE = 10
 EPOCHS = 3
 BATCH_SIZE = 32
+
+rel_path = os.path.abspath(sys.path[0])
 
 
 def get_image_tensor_from_base64(base64_string):
@@ -21,7 +26,7 @@ def get_image_tensor_from_base64(base64_string):
 
 
 def predict(img_tensor):
-    model = keras.models.load_model("model.hdf5")
+    model = keras.models.load_model(os.path.join(rel_path, "model.hdf5"))
     return int(tf.argmax(model.predict(img_tensor)[0]))
 
 
@@ -42,7 +47,8 @@ def train():
         keras.layers.Softmax(),
     ])
 
-    checkpointer = keras.callbacks.ModelCheckpoint(filepath="model.hdf5", verbose=1, save_best_only=True)
+    checkpointer = keras.callbacks.ModelCheckpoint(filepath=os.path.join(rel_path, "model.hdf5"), verbose=1,
+                                                   save_best_only=True)
     model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
     train_image_generator = keras.preprocessing.image.ImageDataGenerator(rescale=1.0 / 255)
@@ -80,7 +86,7 @@ class MainHandler(web.RequestHandler):
         self.render(template_name="index.html",
                     server_address=options.options.server_address,
                     server_port=options.options.server_port,
-                    server_routing=options.options.server_prefix+"/ws")
+                    server_routing=options.options.server_prefix + "/ws")
 
 
 class DrawingHandler(websocket.WebSocketHandler):
@@ -100,7 +106,7 @@ if __name__ == "__main__":
     app = web.Application([
         (prefix + "", MainHandler),
         (prefix + "/ws", DrawingHandler),
-    ], template_path="page")
-
+    ], template_path=os.path.join(rel_path, "page"), debug=True)
+    print(tf.__version__, flush=True)
     app.listen(options.options.server_port)
     ioloop.IOLoop.instance().start()

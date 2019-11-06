@@ -5,11 +5,11 @@
     <title>MNIST</title>
 </head>
 <body style="position: fixed; width: 100%; margin: 0; overflow: hidden; top: 0;">
-<div style="margin: 0px;">
-    <canvas id="canvas" width="28" height="28" style="width: 100%;"></canvas>
-    <button id="clear" style="width: 100%; font-size: 36px;" onclick="clearCanvas()">Clear</button>
+<div style="max-width: 512px; margin: 0 auto;">
+    <canvas height="28" id="canvas" style="width: 100%;" width="28"></canvas>
+    <button id="clear" onclick="clearCanvas()" style="width: 100%; font-size: 36px;">Clear</button>
 </div>
-<div id="result" style="width: 100%; font-size: 36px;"></div>
+<div id="result" style="width: min-content; margin: 0 auto; font-size: 36px; "></div>
 <script>
     const ws = new WebSocket("ws://{{server_address}}:{{server_port}}/{{server_routing}}");
     const canvas = document.getElementById("canvas");
@@ -23,9 +23,10 @@
     clearCanvas();
 
     var enable = false;
+
     function start(ev) {
-        const sx = ev.pageX;
-        const sy = ev.pageY;
+        const sx = ev.pageX - window.scrollX - canvas.offsetLeft;
+        const sy = ev.pageY - window.scrollY - canvas.offsetTop;
         enable = true;
         ctx.beginPath();
         ctx.moveTo(sx * canvasWidth / canvas.clientWidth, sy * canvasHeight / canvas.clientHeight);
@@ -33,8 +34,8 @@
 
     function move(ev) {
         if (enable) {
-            const sx = ev.pageX;
-            const sy = ev.pageY - scrollY;
+            const sx = ev.pageX - window.scrollX - canvas.offsetLeft;
+            const sy = ev.pageY - window.scrollY - canvas.offsetTop;
             ctx.lineTo(canvasWidth * sx / canvas.clientWidth, canvasHeight * sy / canvas.clientHeight);
             ctx.strokeStyle = "#fff";
             ctx.lineWidth = 3.0 * canvasHeight / canvas.clientHeight;
@@ -43,18 +44,12 @@
         }
     }
 
-    ws.onerror = function(error) {
-        const div = document.createElement("div");
-        div.innerText = "fuck";
-        document.getElementById("body").append(div);
-    };
     function end(ev) {
         enable = false;
         ctx.closePath();
         if (ws.readyState === ws.CLOSED || ws.readyState === ws.CLOSING) {
             document.getElementById("result").innerText = "Disconnected";
-        }
-        else  {
+        } else {
             ws.send(canvas.toDataURL("image/jpeg", 1));
             document.getElementById("result").innerText = "Calculating";
         }
