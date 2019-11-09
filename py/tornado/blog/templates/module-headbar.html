@@ -14,10 +14,10 @@
       <a class="nav-item nav-link" href="{{nav_item['href']}}">{{nav_item['text']}}</a>
       {% end %}
       {% if 'username' not in user_info.keys() %}
-      <a class="nav-item nav-link" href="/blog/login?new=1">Register</a>
-      <a class="nav-item nav-link nav-fill nav-pills" href="/blog/login">Login</a>
+      <a class="nav-item nav-link" href="/login?new=1">Register</a>
+      <a class="nav-item nav-link nav-fill nav-pills" href="/login">Login</a>
       {% else %}
-      <a class="nav-link float-right" href="/blog/login?logout=1">Logout</a>
+      <a class="nav-link float-right" href="/login?logout=1">Logout</a>
       {% end %}
     </div>
   </div>

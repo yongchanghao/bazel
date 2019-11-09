@@ -55,7 +55,12 @@ class BaseHandler(web.RequestHandler):
         uid = self.get_secure_cookie("uid")
         if isinstance(uid, bytes):
             uid = uid.decode('utf8')
-        return uid if isinstance(uid, str) and len(uid) > 0 else None
+        if (not isinstance(uid, str)) or len(uid) == 0:
+            return None
+        if global_backend_service.get_user_by_uid(uid) is None:
+            self.clear_cookie("uid")
+            return None
+        return uid
 
     def get_user_info(self):
         uid = self.get_current_user()
@@ -103,7 +108,7 @@ class LoginHandler(BaseHandler):
     def get(self):
         logout = int(self.get_argument("logout", "0"))
         if logout:
-            self.clear_cookie("uid", path="blog")
+            self.clear_cookie("uid")
             self.redirect(MAIN_PAGE)
             return
         register = int(self.get_argument("new", default="0"))
@@ -129,6 +134,8 @@ class LoginHandler(BaseHandler):
             else:
                 global_backend_service.execute(
                     """INSERT INTO User VALUES ('%s', '%s', '%s')""" % (uid, username, password))
+                self.clear_cookie("uid")
+                self.set_secure_cookie("uid", uid)
         else:
             user = global_backend_service.get_user_by_uid(uid)
             if user:
@@ -136,7 +143,6 @@ class LoginHandler(BaseHandler):
                     self.set_secure_cookie(
                         name="uid",
                         value=uid,
-                        path="/blog",
                     )
                 else:
                     self.redirect(LOGIN_PAGE)
@@ -221,7 +227,7 @@ class CommentHandler(BaseHandler):
 if __name__ == "__main__":
     options.define("cookie_secret", "blog", str)
     options.define("port", 8888, int)
-    options.define("base_prefix", "/blog", str)
+    options.define("base_prefix", "", str)
     options.define("debug", True, bool)
     options.define("db_path", "/Users/Schureed/projects/bazel/py/tornado/blog/blog.sqlite", str)
     options.define("server_address", "localhost", str)
@@ -231,7 +237,7 @@ if __name__ == "__main__":
     global_backend_service = backend.BackendService(options.options.db_path)
     BASE_PREFIX = options.options.base_prefix
 
-    MAIN_PAGE = BASE_PREFIX + ""
+    MAIN_PAGE = BASE_PREFIX + "/"
     POST_PAGE = BASE_PREFIX + "/post"
     LOGIN_PAGE = BASE_PREFIX + "/login"
     COMMENT_PAGE = BASE_PREFIX + "/comment"

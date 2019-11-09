@@ -22,11 +22,11 @@
     </div>
     <div class="card-footer text-right">
       {% if 'username' not in user_info %}
-      <a class="btn m-0 p-0" href="/blog/login" style="line-height: 0;">
+      <a class="btn m-0 p-0" href="/login" style="line-height: 0;">
         <img class="img-fluid m-0 p-0" src="{{static_url('svg/thumbsup.svg')}}">
       </a>
       <a class="m-0 p-0 mr-2 align-bottom">{{len(post['like_list'])}}</a>
-      <a class="btn m-0 p-0" href="/blog/login" style="line-height: 0;">
+      <a class="btn m-0 p-0" href="/login" style="line-height: 0;">
         <img class="img-fluid m-0 p-0" src="{{static_url('svg/comment.svg')}}">
       </a>
       {% else %}
@@ -57,7 +57,7 @@
         </div>
         {% end %}
       </div>
-      <form action="/blog/comment" class="input-group" method="post">
+      <form action="/comment" class="input-group" method="post">
         <textarea class="form-control mr-2" name="content" placeholder="Markdown is supported"></textarea>
         <div class="input-group-prepend"><input class="btn btn-primary" type="submit" value="Comment"></div>
         <input name="pid" type="hidden" value="{{post['pid']}}">
@@ -82,7 +82,7 @@
     const HOSTNAME = window.location.hostname;
     const PORT = window.location.port;
     const URL = HOSTNAME + ":" + PORT;
-    const ws = new WebSocket("ws://" + URL + "/blog/paws");
+    const ws = new WebSocket("ws://" + URL + "/paws");
     let busy = false;
 
     function like(ev) {
@@ -133,7 +133,7 @@
         el.onclick = unlike;
     });
     ws.onmessage = function () {
-        window.location.href = "/blog/login";
+        window.location.href = "/login";
     };
 </script>
 <script async id="MathJax-script"
