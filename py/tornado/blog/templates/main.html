@@ -17,7 +17,7 @@
       {{datetime.datetime.fromtimestamp(post["time"]//1000).strftime("%Y-%m-%d %H:%M")}}
     </div>
     <div class="card-body">
-      {% if len(post["title"]) > 0 %}<h1 class="card-title">{{post["title"]}}</h1>{% end %}
+      {% if len(post["title"]) > 0 %}<h5 class="card-title">{{post["title"]}}</h5>{% end %}
       <div class="card-text">{% raw (post["content"]) %}</div>
     </div>
     <div class="card-footer text-right">
@@ -92,7 +92,6 @@
         busy = true;
         const el = ev.toElement;
         const pid = el.getAttribute("pid");
-        console.log(el);
         el.setAttribute("src", "{{static_url('svg/thumbsup-blue.svg')}}");
         el.parentElement.setAttribute("name", "unlike");
         el.parentElement.onclick = unlike;
