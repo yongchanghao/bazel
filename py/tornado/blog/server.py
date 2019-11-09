@@ -13,7 +13,7 @@ from tornado import web, ioloop, options, websocket
 from py.tornado.blog import backend
 from py.tornado.blog import uimodules
 
-ABS_PATH = os.path.abspath(sys.path[0])
+ABS_PATH = os.path.abspath(os.path.sep.join(sys.argv[0].split(os.path.sep)[:-1]))
 
 BASE_PREFIX = ""
 MAIN_PAGE = ""

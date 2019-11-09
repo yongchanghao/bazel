@@ -5,5 +5,6 @@ exports_files(
         "login.html",
         "main.html",
         "register.html",
+        "module-headbar.html",
     ],
 )
