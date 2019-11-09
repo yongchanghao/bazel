@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  {% if 'username' in user_info %}
+  <a class="navbar-brand" href="">{{user_info['username'].title()}}</a>
+  {% else %}
+  <a class="navbar-brand" href="">{{title}}</a>
+  {% end %}
+  <button aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+          data-target="#navbarNavAltMarkup" data-toggle="collapse" type="button">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      {% for nav_item in nav_items %}
+      <a class="nav-item nav-link" href="{{nav_item['href']}}">{{nav_item['text']}}</a>
+      {% end %}
+      {% if 'username' not in user_info.keys() %}
+      <a class="nav-item nav-link" href="/blog/login?new=1">Register</a>
+      <a class="nav-item nav-link nav-fill nav-pills" href="/blog/login">Login</a>
+      {% else %}
+      <a class="nav-link float-right" href="/blog/login?logout=1">Logout</a>
+      {% end %}
+    </div>
+  </div>
+</nav>

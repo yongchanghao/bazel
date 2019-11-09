@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+  <title></title>
+</head>
+<body>
+{% module NavBar(user_info) %}
+
+<div class="container">
+  {% for post in posts %}
+  <div class="card my-3">
+    <div class="card-header text-right">
+      {{datetime.datetime.fromtimestamp(post["time"]//1000).strftime("%Y-%m-%d %H:%M")}}
+    </div>
+    <div class="card-body">
+      {% if len(post["title"]) > 0 %}<h1 class="card-title">{{post["title"]}}</h1>{% end %}
+      <div class="card-text">{% raw (post["content"]) %}</div>
+    </div>
+    <div class="card-footer text-right">
+      {% if 'username' not in user_info %}
+      <a class="btn m-0 p-0" href="/blog/login" style="line-height: 0;">
+        <img class="img-fluid m-0 p-0" src="{{static_url('svg/thumbsup.svg')}}">
+      </a>
+      <a class="m-0 p-0 mr-2 align-bottom">{{len(post['like_list'])}}</a>
+      <a class="btn m-0 p-0" href="/blog/login" style="line-height: 0;">
+        <img class="img-fluid m-0 p-0" src="{{static_url('svg/comment.svg')}}">
+      </a>
+      {% else %}
+      {% if post['liked'] %}
+      <button class="btn m-0 p-0" name="unlike" style="line-height: 0;">
+        <img class="img-fluid m-0 p-0" pid="{{post['pid']}}" src="{{static_url('svg/thumbsup-blue.svg')}}">
+      </button>
+      {% else %}
+      <button class="btn m-0 p-0" name="like" style="line-height: 0;">
+        <img class="img-fluid m-0 p-0" pid="{{post['pid']}}" src="{{static_url('svg/thumbsup.svg')}}">
+      </button>
+      {% end %}
+      <a class="m-0 p-0 mr-2 align-bottom">{{len(post['like_list'])}}</a>
+      <button aria-expanded="false" class="btn m-0 p-0" data-target="#commentArea-{{post['pid']}}"
+              data-toggle="collapse" name="comment" style="line-height: 0;">
+        <img class="img-fluid m-0 p-0" src="{{static_url('svg/comment.svg')}}">
+      </button>
+      {% end %}
+    </div>
+    <div class="card-footer collapse" id="commentArea-{{post['pid']}}">
+      <div class="list-group list-group-flush">
+        {% for comment in post['comment_list'] %}
+        <div class="list-group-item-text row ml-2 border-bottom my-1 blockquote-footer">
+          <div class="row col-auto">
+            {{comment['username']}}
+          </div>
+          <a class="col">{% raw comment['content'] %}</a>
+        </div>
+        {% end %}
+      </div>
+      <form action="/blog/comment" class="input-group" method="post">
+        <textarea class="form-control mr-2" name="content" placeholder="Markdown is supported"></textarea>
+        <div class="input-group-prepend"><input class="btn btn-primary" type="submit" value="Comment"></div>
+        <input name="pid" type="hidden" value="{{post['pid']}}">
+      </form>
+    </div>
+  </div>
+  {% end %}
+</div>
+<script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="{{static_url('js/md5.min.js')}}"></script>
+<script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+        }
+    };
+    const HOSTNAME = window.location.hostname;
+    const PORT = window.location.port;
+    const URL = HOSTNAME + ":" + PORT;
+    const ws = new WebSocket("ws://" + URL + "/blog/paws");
+    let busy = false;
+
+    function like(ev) {
+        if (busy || ws.readyState === ws.CONNECTING) {
+            return;
+        }
+        busy = true;
+        const el = ev.toElement;
+        const pid = el.getAttribute("pid");
+        console.log(el);
+        el.setAttribute("src", "{{static_url('svg/thumbsup-blue.svg')}}");
+        el.parentElement.setAttribute("name", "unlike");
+        el.parentElement.onclick = unlike;
+        el.parentElement.nextElementSibling.innerText = parseInt(el.parentElement.nextElementSibling.innerText) + 1;
+        el.parentElement.setAttribute("disabled", "true");
+        ws.send(JSON.stringify({
+            "action": "like",
+            "pid": pid
+        }));
+        el.parentElement.removeAttribute("disabled");
+        busy = false;
+    }
+
+    function unlike(ev) {
+        if (busy || ws.readyState === ws.CONNECTING) {
+            return;
+        }
+        busy = true;
+        const el = ev.toElement;
+        const pid = el.getAttribute("pid");
+        el.setAttribute("src", "{{static_url('svg/thumbsup.svg')}}");
+        el.parentElement.setAttribute("name", "like");
+        el.parentElement.onclick = like;
+        el.parentElement.nextElementSibling.innerText = parseInt(el.parentElement.nextElementSibling.innerText) - 1;
+        el.parentElement.setAttribute("disabled", "true");
+        ws.send(JSON.stringify({
+            "action": "unlike",
+            "pid": pid
+        }));
+        el.parentElement.removeAttribute("disabled");
+        busy = false;
+    }
+
+    document.getElementsByName("like").forEach((el) => {
+        el.onclick = like;
+    });
+    document.getElementsByName("unlike").forEach((el) => {
+        el.onclick = unlike;
+    });
+    ws.onmessage = function () {
+        window.location.href = "/blog/login";
+    };
+</script>
+<script async id="MathJax-script"
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+</body>
+</html>

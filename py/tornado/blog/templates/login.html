@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>{{_("Login")}}</title>
+</head>
+<body>
+{% module NavBar(user_info) %}
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-auto mx-auto text" style="font-size: x-large;">
+      Login
+    </div>
+  </div>
+  <div class="row align-items-center mt-5">
+    <div class="col-auto mx-auto ">
+      <form action="login" method="post">
+        <div class="form-group row">
+          <input class="form-control" id="username" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="form-group row">
+          <input class="form-control" id="password" name="password" placeholder="Password" type="password">
+        </div>
+        <div class="form-group row">
+          <input class="col btn btn-primary mr-2" onclick="encode()" type="submit" value="Login">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script crossorigin="anonymous" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="{{static_url('js/md5.min.js')}}"></script>
+<script>
+    function encode() {
+        const el = document.getElementById("password");
+        el.value = md5.hex(el.value);
+    }
+</script>
+</body>
+</html>
