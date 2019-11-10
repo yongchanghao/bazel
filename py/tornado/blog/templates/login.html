@@ -18,14 +18,15 @@
   <div class="row align-items-center mt-5">
     <div class="col-auto mx-auto ">
       <form action="login" method="post">
+        <input id="final" name="password" type="hidden" value="">
         <div class="form-group row">
           <input class="form-control" id="username" name="username" placeholder="Username" type="text">
         </div>
         <div class="form-group row">
-          <input class="form-control" id="password" name="password" placeholder="Password" type="password">
+          <input class="form-control" id="password" placeholder="Password" type="password">
         </div>
         <div class="form-group row">
-          <input class="col btn btn-primary mr-2" onclick="encode()" type="submit" value="Login">
+          <input class="col btn btn-primary" onclick="encode()" type="submit" value="Login">
         </div>
       </form>
     </div>
@@ -41,7 +42,7 @@
 <script>
     function encode() {
         const el = document.getElementById("password");
-        el.value = md5.hex(el.value);
+        document.getElementById("final").value = md5.hex(el.value);
     }
 </script>
 </body>

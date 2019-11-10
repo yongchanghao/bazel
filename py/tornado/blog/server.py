@@ -195,7 +195,6 @@ class PostActionHandler(websocket.WebSocketHandler, BaseHandler):
             global_backend_service.execute(
                 """INSERT INTO Like VALUES (null, '%s', %d, %d)""" % (user["uid"], pid, int(time.time() * 1000)))
         elif data["action"] == "unlike":
-            print("""DELETE FROM Like WHERE uid = '%s' AND pid = %d""" % (user["uid"], pid), flush=True)
             global_backend_service.execute(
                 """DELETE FROM Like WHERE uid = '%s' AND pid = %d""" % (user["uid"], pid))
 
@@ -229,7 +228,7 @@ if __name__ == "__main__":
     options.define("port", 8888, int)
     options.define("base_prefix", "", str)
     options.define("debug", True, bool)
-    options.define("db_path", "/Users/Schureed/projects/bazel/py/tornado/blog/blog.sqlite", str)
+    options.define("db_path", os.path.join(ABS_PATH, "blog.db"), str)
     options.define("server_address", "localhost", str)
 
     options.parse_command_line()

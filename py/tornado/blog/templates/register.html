@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
-  <meta charset="UTF-8">
-  <title>{{_("Register")}}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>{{_("Register")}}</title>
 </head>
 <body>
 {% module NavBar(user_info) %}
 <div class="container">
-  <div class="row mt-5">
-    <div class="col-auto mx-auto text" style="font-size: x-large;">
-      <a class="btn-link" href="/login">Login</a> / Register
+    <div class="row mt-5">
+        <div class="col-auto mx-auto text" style="font-size: x-large;">
+            <a class="btn-link" href="/login">Login</a> / Register
+        </div>
     </div>
-  </div>
-  <div class="row align-items-center mt-5">
-    <div class="col-auto mx-auto ">
-      <form action="login" method="post">
-        <input name="new" type="hidden" value="1">
-        <div class="form-group">
-          <input class="form-control" id="username" name="username" placeholder="username" type="text"
-                 value="{{username}}">
-          <small class="form-text text-muted">You can name your account whatever you like as long as it has not been
-            used.</small>
+    <div class="row align-items-center mt-5">
+        <div class="col-auto mx-auto ">
+            <form action="login" method="post">
+                <input name="new" type="hidden" value="1">
+                <input name="password" id="final" type="hidden" value="">
+                <div class="form-group row">
+                    <input class="form-control" id="username" name="username" placeholder="username" type="text"
+                           value="{{username}}">
+                </div>
+                <div class="form-group row">
+                    <input class="form-control" id="raw" name="" placeholder="password" type="password">
+                </div>
+                <div class="form-group row">
+                    <input class="form-control" id="cfm" placeholder="confirm password" type="password">
+                </div>
+                <div class="form-group row">
+                    <input class="col btn btn-primary" disabled id="submit" onclick="encode()" type="submit"
+                           value="Submit">
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-          <input class="form-control" id="raw" name="password" placeholder="password" type="password">
-          <small class="form-text text-muted">{{_("Your password will be encrypted by MD5.")}}</small>
-          <small class="form-text text-muted">{{_("However, a distinctive password is still recommended.")}}</small>
+        <div class="col-auto mx-auto">
+            <small class="form-text text-muted">{{_("Your password will be encrypted by MD5.")}}</small>
+            <small class="form-text text-muted">{{_("However, a distinctive password is still recommended.")}}</small>
         </div>
-        <div class="form-group">
-          <input class="form-control" id="cfm" placeholder="confirm password" type="password">
-        </div>
-        <div class="form-group">
-          <input class="btn btn-primary" disabled id="submit" onclick="encode()" type="submit" value="Submit">
-        </div>
-      </form>
     </div>
-  </div>
 </div>
 <script crossorigin="anonymous" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -63,7 +65,7 @@
 
     function encode() {
         const elem = document.getElementById("raw");
-        elem.value = md5.hex(elem.value);
+        document.getElementById("final").value = md5.hex(elem.value);
     }
 </script>
 </body>
