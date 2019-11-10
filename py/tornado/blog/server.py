@@ -169,7 +169,7 @@ class ComposeHandler(BaseHandler):
             self.set_status(404, "Page Not Found")
             return
         title = self.get_argument("title")
-        content = self.get_argument("content")
+        content = markdown.markdown(self.get_argument("content"))
         timestamp = int(time.time() * 1000)
 
         filepath = os.path.abspath(os.path.join(ABS_PATH, "posts"))
